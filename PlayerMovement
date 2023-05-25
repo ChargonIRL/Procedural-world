@@ -1,0 +1,87 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+
+public class PlayerMovement : MonoBehaviour
+{
+
+    private float horizontalMovement;
+    private float verticalMovement;
+
+    public float speed = 5.0f;
+
+    public float drag;
+
+    public float look = 5;
+
+    private Rigidbody rb;
+
+    public Text speedTxt;
+
+    public float xRotation = 0f;
+
+    public float mouseSensitivity = 100f;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        rb.freezeRotation = true;
+        Application.targetFrameRate = 60;
+
+        speed = PlayerPrefs.GetFloat("Speed");
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        // This will detect forward and backward movement
+        horizontalMovement = Input.GetAxisRaw("Horizontal");
+
+        // This will detect sideways movement
+        verticalMovement = Input.GetAxisRaw("Vertical");
+
+        // Calculate the direction to move the player
+       
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene("World");
+        }
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+        {
+            speed++;
+
+        }
+        if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+        {
+            speed--;
+        }
+        speedTxt.text = "Speed: " + speed.ToString();
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            Application.Quit();
+        }
+        PlayerPrefs.SetFloat("Speed", speed);
+    }
+
+    void FixedUpdate()
+    { 
+        
+        Vector3 movementDirection = transform.forward * verticalMovement + transform.right * horizontalMovement;
+        // Move the player
+        rb.AddForce(movementDirection * speed, ForceMode.Force);
+        // Apply drag
+        rb.drag = drag;
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            transform.position = transform.position + new Vector3(0f, .5f, 0f);
+        }
+        if (Input.GetKey(KeyCode.LeftControl))
+        {
+            transform.position = transform.position + new Vector3(0f, -.5f, 0f);
+        }
+    }
+}
