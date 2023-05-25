@@ -1,0 +1,68 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
+
+public class FlattenMesh : MonoBehaviour
+{
+    public Texture2D textureMap;
+    public List<int> pixelValues = new List<int>();
+    public int pixelCount = 0;
+    public bool RW1 = false;
+    public bool RW2 = false;
+    public bool RW3 = false;
+    public bool RW4 = false;
+    public bool RW5 = false;
+
+    public bool[] randomWorld;
+    public Renderer[] wallToRender;
+    public Renderer[] campToRender;
+    public Renderer[] houseToRender;
+    public Collider[] wallToCollider;
+    public Collider[] campToCollider;
+    public Collider[] houseToCollider;
+    public Texture2D[] textureLists;
+
+    void Awake()
+    {
+        int RandomWorldnum = Random.Range(0,5);
+        print(RandomWorldnum);
+
+        randomWorld[RandomWorldnum] = true;
+        foreach (bool possibleWorld in randomWorld)
+        {
+            if (possibleWorld)
+            {
+                textureMap = textureLists[RandomWorldnum];
+                wallToRender[RandomWorldnum].enabled = true;
+                campToRender[RandomWorldnum].enabled = true;
+                houseToRender[RandomWorldnum].enabled = true;
+                wallToCollider[RandomWorldnum].enabled = true;
+                campToCollider[RandomWorldnum].enabled = true;
+                houseToCollider[RandomWorldnum].enabled = true;
+            }
+        }
+
+        ConvertImage();
+    }
+
+    public void ConvertImage()
+    {
+        Color32[] pixels = textureMap.GetPixels32(0);
+
+        foreach (Color32 pixel in pixels)
+        {
+              if (pixel.r >= 127)
+            {
+                pixelValues.Add(1);
+
+            }
+            else
+            { 
+                pixelValues.Add(0);
+
+            }
+        }
+    }
+
+}
